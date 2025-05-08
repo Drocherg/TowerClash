@@ -6,10 +6,11 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Bullet {
     Vector2 position;
-    Enemy target; // en lugar de Vector2
+    Enemy target;
     float speed = 200f;
     Texture texture;
     int damage;
+    public boolean isActive = true; // ✅ para saber si debe eliminarse
 
     public Bullet(Vector2 startPos, Enemy target, Texture texture, int damage) {
         this.position = new Vector2(startPos);
@@ -19,9 +20,18 @@ public class Bullet {
     }
 
     public void update(float delta) {
-        if (target == null) return;
+        if (target == null || target.isDead()) {
+            isActive = false; // 🔴 sin objetivo válido
+            return;
+        }
+
         Vector2 direction = new Vector2(target.position).sub(position).nor();
         position.add(direction.scl(speed * delta));
+
+        if (hasReachedTarget()) {
+            target.takeDamage(damage); // 🩸 aplicar daño
+            isActive = false; // ✅ marcar como usada
+        }
     }
 
     public boolean hasReachedTarget() {
@@ -29,7 +39,8 @@ public class Bullet {
     }
 
     public void render(SpriteBatch batch) {
-        batch.draw(texture, position.x - 5, position.y - 5, 10, 10);
+        if (isActive) {
+            batch.draw(texture, position.x - 5, position.y - 5, 10, 10);
+        }
     }
 }
-

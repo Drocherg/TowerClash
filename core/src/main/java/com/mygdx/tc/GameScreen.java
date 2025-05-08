@@ -87,12 +87,14 @@ public class GameScreen implements Screen {
         for (Tower tower : levelManager.towersThisLevel) {
             tower.update(delta, levelManager.currentEnemies);
         }
-        levelManager.currentEnemies.removeIf(Enemy::isDead);
 
         // ACTUALIZAR ENEMIGOS
         for (Enemy enemy : levelManager.currentEnemies) {
             enemy.update(delta);
         }
+
+        // Eliminar enemigos muertos
+        levelManager.currentEnemies.removeIf(Enemy::isDead);
 
         // OLEADA TERMINADA → siguiente
         if (levelManager.isWaveFinished()) {
@@ -138,7 +140,6 @@ public class GameScreen implements Screen {
         batch.end();
     }
 
-
     // CALCULAR DISTANCIA DE PUNTO A UN SEGMENTO DE LÍNEA
     public float distanceToSegment(Vector2 A, Vector2 B, Vector2 P) {
         Vector2 AB = new Vector2(B).sub(A);
@@ -165,4 +166,3 @@ public class GameScreen implements Screen {
         font.dispose();  // Asegúrate de liberar el BitmapFont
     }
 }
-

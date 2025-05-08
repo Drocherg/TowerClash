@@ -24,6 +24,12 @@ public class Path {
         waypoints.add(new Vector2(360, 220));
         waypoints.add(new Vector2(480, 180));
         waypoints.add(new Vector2(640, 180)); // Final en borde derecho
+
+
+        // Log para verificar los puntos
+        for (Vector2 waypoint : waypoints) {
+            System.out.println("Waypoint: " + waypoint);
+        }
     }
 
 }

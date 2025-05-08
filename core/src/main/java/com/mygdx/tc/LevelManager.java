@@ -43,4 +43,8 @@ public class LevelManager {
         return money;
     }
 
+    // Método que elimina a los enemigos muertos
+    public void removeDeadEnemies() {
+        currentEnemies.removeIf(Enemy::isDead);  // Elimina todos los enemigos que estén muertos
+    }
 }

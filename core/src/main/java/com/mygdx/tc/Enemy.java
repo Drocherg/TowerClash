@@ -6,16 +6,24 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 public class Enemy {
+    private static int nextId = 0;  // Generador de IDs únicos
+    private int id;  // ID único para cada enemigo
     Vector2 position;
     int currentWaypoint;
     float speed = 60f;
     Path path;
     public float health = 100;
+    private boolean isDead = false; // 👈 nuevo campo para evitar duplicar efectos
 
     public Enemy(Path path) {
+        this.id = nextId++;  // Asigna un ID único e incrementa el contador
         this.path = path;
         this.position = new Vector2(path.waypoints.get(0));
         this.currentWaypoint = 1;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public void update(float delta) {
@@ -29,35 +37,39 @@ public class Enemy {
     }
 
     public void render(SpriteBatch batch, Texture texture) {
-        batch.draw(texture, position.x - 16, position.y - 16, 32, 32); // enemigo más pequeño
+        if (!isDead) {  // Solo renderiza si el enemigo no está muerto
+            batch.draw(texture, position.x - 16, position.y - 16, 32, 32);
+        }
     }
+
     public void renderHealthBar(ShapeRenderer shapeRenderer) {
-        float barWidth = 32;
-        float barHeight = 4;
-        float x = position.x - barWidth / 2;
-        float y = position.y + 20;
+        if (!isDead) {  // Solo renderiza la barra de salud si el enemigo no está muerto
+            float barWidth = 32;
+            float barHeight = 4;
+            float x = position.x - barWidth / 2;
+            float y = position.y + 20;
 
-        float healthRatio = Math.max(health / 100f, 0);
+            float healthRatio = Math.max(health / 100f, 0);
 
-        shapeRenderer.setColor(1, 0, 0, 1); // rojo (fondo)
-        shapeRenderer.rect(x, y, barWidth, barHeight);
+            shapeRenderer.setColor(1, 0, 0, 1);
+            shapeRenderer.rect(x, y, barWidth, barHeight);
 
-        shapeRenderer.setColor(0, 1, 0, 1); // verde (salud restante)
-        shapeRenderer.rect(x, y, barWidth * healthRatio, barHeight);
+            shapeRenderer.setColor(0, 1, 0, 1);
+            shapeRenderer.rect(x, y, barWidth * healthRatio, barHeight);
+        }
     }
 
-
-    // Método para recibir daño de las balas
     public void takeDamage(int amount) {
+        if (isDead) return;  // Si ya está muerto, no hace nada.
         health -= amount;
-
+        if (health <= 0) {
+            isDead = true;  // Marca como muerto
+            GameScreen.levelManager.enemyKilled();  // Llamada para sumar dinero
+            System.out.println("Enemigo " + id + " ha muerto.");
+        }
     }
 
     public boolean isDead() {
-        if (health <= 0) {
-            GameScreen.levelManager.enemyKilled(); // o LevelManager.levelManager...
-            return true;
-        }
-        return false;
+        return isDead;
     }
 }

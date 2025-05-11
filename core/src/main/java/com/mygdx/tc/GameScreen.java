@@ -44,6 +44,8 @@ public class GameScreen implements Screen {
         levelManager = new LevelManager();
         levelManager.startLevel();
         levelManager.startNextWave();
+
+
     }
 
     @Override
@@ -73,7 +75,7 @@ public class GameScreen implements Screen {
 
             if (!isOnPath) {
                 if (LevelManager.money >= 50) {
-                    levelManager.towersThisLevel.add(new Tower(towerPos, towerTexture));
+                    levelManager.towersThisLevel.add(new Tower(towerPos, towerTexture, bulletTexture));
                     LevelManager.money -= 50;
                 } else {
                     System.out.println("No tienes suficiente dinero para colocar la torre.");
@@ -95,6 +97,7 @@ public class GameScreen implements Screen {
 
         // Eliminar enemigos muertos
         levelManager.currentEnemies.removeIf(Enemy::isDead);
+        levelManager.removeDeadEnemies();
 
         // OLEADA TERMINADA → siguiente
         if (levelManager.isWaveFinished()) {

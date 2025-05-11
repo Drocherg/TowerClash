@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Enemy {
     private static int nextId = 0;  // Generador de IDs únicos
-    private int id;  // ID único para cada enemigo
+    private final int id;  // ID único para cada enemigo
     Vector2 position;
     int currentWaypoint;
     float speed = 60f;
@@ -27,6 +27,7 @@ public class Enemy {
     }
 
     public void update(float delta) {
+        if (isDead) return; // 🚫 no seguir moviendo si está muerto
         if (currentWaypoint >= path.waypoints.size()) return;
 
         Vector2 target = path.waypoints.get(currentWaypoint);
@@ -35,6 +36,7 @@ public class Enemy {
 
         if (position.dst(target) < 5f) currentWaypoint++;
     }
+
 
     public void render(SpriteBatch batch, Texture texture) {
         if (!isDead) {  // Solo renderiza si el enemigo no está muerto

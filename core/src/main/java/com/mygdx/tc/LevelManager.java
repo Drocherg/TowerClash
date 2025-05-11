@@ -30,8 +30,10 @@ public class LevelManager {
     }
 
     public boolean isWaveFinished() {
-        return currentEnemies.stream().allMatch(e -> e.currentWaypoint >= currentPath.waypoints.size());
+        return currentEnemies.stream()
+            .noneMatch(e -> !e.isDead() && e.currentWaypoint < currentPath.waypoints.size());
     }
+
 
     public static void enemyKilled() {
         money += 10; // Ganas 10 por matar un enemigo

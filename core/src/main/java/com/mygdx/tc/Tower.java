@@ -9,18 +9,18 @@ import java.util.List;
 public class Tower {
     Vector2 position;
     Texture texture;
-    Texture bulletTexture; // ✅ Solo una instancia, no muchas
+    Texture bulletTexture;
     List<Bullet> bullets;
 
     float shootInterval = 1f;
     float timeSinceLastShot = 0f;
     int damage = 20;
-    float range = 150f; // ✅ rango de ataque
+    float range = 150f;
 
-    public Tower(Vector2 position, Texture texture) {
+    public Tower(Vector2 position, Texture texture, Texture bulletTexture) {
         this.position = position;
         this.texture = texture;
-        this.bulletTexture = new Texture("cannonBall.png"); // una vez
+        this.bulletTexture = bulletTexture;
         this.bullets = new ArrayList<>();
     }
 
@@ -36,7 +36,7 @@ public class Tower {
         }
 
         bullets.forEach(b -> b.update(delta));
-        bullets.removeIf(b -> !b.isActive); // ✅ eliminar balas inactivas
+        bullets.removeIf(b -> !b.isActive);
     }
 
     private Enemy getClosestEnemyInRange(List<Enemy> enemies) {
@@ -45,11 +45,9 @@ public class Tower {
 
         for (Enemy enemy : enemies) {
             float dist = position.dst(enemy.position);
-            if (dist < range && !enemy.isDead()) {
-                if (dist < minDist) {
-                    minDist = dist;
-                    closest = enemy;
-                }
+            if (dist < range && !enemy.isDead() && dist < minDist) {
+                minDist = dist;
+                closest = enemy;
             }
         }
 
@@ -61,10 +59,5 @@ public class Tower {
         for (Bullet bullet : bullets) {
             bullet.render(batch);
         }
-    }
-
-    public void dispose() {
-        texture.dispose();
-        bulletTexture.dispose();
     }
 }

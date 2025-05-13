@@ -28,7 +28,14 @@ public class Enemy {
 
     public void update(float delta) {
         if (isDead) return; // 🚫 no seguir moviendo si está muerto
-        if (currentWaypoint >= path.waypoints.size()) return;
+        if (currentWaypoint >= path.waypoints.size()) {
+            if (!isDead) {
+                isDead = true; // Lo marcamos como muerto para no seguir dibujándolo
+                GameScreen.levelManager.enemyEscaped(); // Resta una vida
+            }
+            return;
+        }
+
 
         Vector2 target = path.waypoints.get(currentWaypoint);
         Vector2 direction = new Vector2(target).sub(position).nor();
@@ -36,6 +43,7 @@ public class Enemy {
 
         if (position.dst(target) < 5f) currentWaypoint++;
     }
+
 
 
     public void render(SpriteBatch batch, Texture texture) {

@@ -10,6 +10,7 @@ public class LevelManager {
     public Path currentPath;
     public List<Enemy> currentEnemies;
     public List<Tower> towersThisLevel;
+    public int lives = 20; // o el número que prefieras
 
     public static int money = 100;           // 💰 dinero inicial
     public int towerCost = 30;        // 💸 costo por torre
@@ -27,6 +28,11 @@ public class LevelManager {
         for (int i = 0; i < 5 + currentWave * 2; i++) {
             currentEnemies.add(new Enemy(currentPath));
         }
+    }
+
+    public void enemyEscaped() {
+        lives--;
+        System.out.println("¡Un enemigo ha llegado al final! Vidas restantes: " + lives);
     }
 
     public boolean isWaveFinished() {

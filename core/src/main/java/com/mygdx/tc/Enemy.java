@@ -5,81 +5,74 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.List;
+
 public class Enemy {
-    private static int nextId = 0;  // Generador de IDs únicos
-    private final int id;  // ID único para cada enemigo
-    Vector2 position;
-    int currentWaypoint;
-    float speed = 60f;
-    Path path;
-    public float health = 100;
-    private boolean isDead = false; // 👈 nuevo campo para evitar duplicar efectos
+    public Vector2 position;
+    public int currentWaypoint = 0;
+    public float speed = 60f;
+    public int maxHealth = 100;
+    public int currentHealth = maxHealth;
+    private boolean isDead = false;
+    private boolean reachedEnd = false;
+
+    private List<Vector2> path;
 
     public Enemy(Path path) {
-        this.id = nextId++;  // Asigna un ID único e incrementa el contador
-        this.path = path;
-        this.position = new Vector2(path.waypoints.get(0));
-        this.currentWaypoint = 1;
-    }
-
-    public int getId() {
-        return id;
+        this.path = path.waypoints;
+        this.position = new Vector2(this.path.get(0));
     }
 
     public void update(float delta) {
-        if (isDead) return; // 🚫 no seguir moviendo si está muerto
-        if (currentWaypoint >= path.waypoints.size()) {
-            if (!isDead) {
-                isDead = true; // Lo marcamos como muerto para no seguir dibujándolo
-                GameScreen.levelManager.enemyEscaped(); // Resta una vida
+        if (isDead || reachedEnd) return;
+
+        if (currentWaypoint < path.size()) {
+            Vector2 target = path.get(currentWaypoint);
+            Vector2 direction = new Vector2(target).sub(position).nor();
+            position.add(direction.scl(speed * delta));
+
+            if (position.dst(target) < 3f) {
+                currentWaypoint++;
+                if (currentWaypoint >= path.size() && !reachedEnd && !isDead) {
+                    reachedEnd = true;
+                    LevelManager.lives--;
+                    System.out.println("Un enemigo llegó al final. Vidas: " + LevelManager.lives);
+                }
             }
-            return;
-        }
-
-
-        Vector2 target = path.waypoints.get(currentWaypoint);
-        Vector2 direction = new Vector2(target).sub(position).nor();
-        position.add(direction.scl(speed * delta));
-
-        if (position.dst(target) < 5f) currentWaypoint++;
-    }
-
-
-
-    public void render(SpriteBatch batch, Texture texture) {
-        if (!isDead) {  // Solo renderiza si el enemigo no está muerto
-            batch.draw(texture, position.x - 16, position.y - 16, 32, 32);
         }
     }
 
-    public void renderHealthBar(ShapeRenderer shapeRenderer) {
-        if (!isDead) {  // Solo renderiza la barra de salud si el enemigo no está muerto
-            float barWidth = 32;
-            float barHeight = 4;
-            float x = position.x - barWidth / 2;
-            float y = position.y + 20;
-
-            float healthRatio = Math.max(health / 100f, 0);
-
-            shapeRenderer.setColor(1, 0, 0, 1);
-            shapeRenderer.rect(x, y, barWidth, barHeight);
-
-            shapeRenderer.setColor(0, 1, 0, 1);
-            shapeRenderer.rect(x, y, barWidth * healthRatio, barHeight);
-        }
-    }
-
-    public void takeDamage(int amount) {
-        if (isDead) return;  // Si ya está muerto, no hace nada.
-        health -= amount;
-        if (health <= 0) {
-            isDead = true;  // Marca como muerto
-            GameScreen.levelManager.enemyKilled();  // Llamada para sumar dinero
-            System.out.println("Enemigo " + id + " ha muerto.");
+    public void takeDamage(int damage) {
+        currentHealth -= damage;
+        if (currentHealth <= 0 && !isDead) {
+            isDead = true;
+            LevelManager.enemyKilled();
         }
     }
 
     public boolean isDead() {
         return isDead;
+    }
+
+    public boolean hasReachedEnd() {
+        return reachedEnd;
+    }
+
+    public void render(SpriteBatch batch, Texture texture) {
+        if (!isDead) {
+            batch.draw(texture, position.x - 16, position.y - 16, 64, 64);
+        }
+    }
+
+    public void renderHealthBar(ShapeRenderer shapeRenderer) {
+        if (!isDead) {
+            float barWidth = 20;
+            float barHeight = 3;
+            float healthPercent = (float) currentHealth / maxHealth;
+            shapeRenderer.setColor(1, 0, 0, 1);
+            shapeRenderer.rect(position.x - barWidth / 2, position.y + 10, barWidth, barHeight);
+            shapeRenderer.setColor(0, 1, 0, 1);
+            shapeRenderer.rect(position.x - barWidth / 2, position.y + 10, barWidth * healthPercent, barHeight);
+        }
     }
 }

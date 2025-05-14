@@ -13,8 +13,17 @@ public class GameMain extends Game {
         this.setScreen(new MainMenuScreen(this)); // inicia con el menú
     }
 
+    public void startGame() {
+        // Al iniciar el juego o reiniciar, pasa la instancia de GameMain a GameScreen
+        this.setScreen(new GameScreen(this)); // Asegúrate de pasar la instancia de GameMain
+    }
+
     @Override
     public void dispose() {
         batch.dispose();
+    }
+
+    public void showGameOverScreen() {
+        this.setScreen(new GameOverScreen(this)); // Puedes cambiar a GameOverScreen cuando sea necesario
     }
 }

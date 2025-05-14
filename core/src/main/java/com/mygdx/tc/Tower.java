@@ -93,10 +93,14 @@ public class Tower {
     }
 
     public void render(SpriteBatch batch) {
-        batch.draw(texture, position.x - 64, position.y - 64, 128, 128); // Tamaño de torre
+        float drawSize = 128;
+        if (type == 3) drawSize = 96; // Torre de mago más pequeña
+
+        batch.draw(texture, position.x - drawSize / 2, position.y - drawSize / 2, drawSize, drawSize);
 
         for (Bullet bullet : bullets) {
             bullet.render(batch);
         }
     }
+
 }

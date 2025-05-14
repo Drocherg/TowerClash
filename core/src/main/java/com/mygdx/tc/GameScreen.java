@@ -4,13 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -32,6 +31,12 @@ public class GameScreen implements Screen {
     private Skin skin;
     private TextButton towerButton1, towerButton2, towerButton3;
     private int selectedTowerType = 1;
+    private GameMain game;
+
+    // Constructor que recibe GameMain
+    public GameScreen(GameMain game) {
+        this.game = game; // Guardar la instancia de GameMain
+    }
 
     @Override
     public void show() {
@@ -66,9 +71,9 @@ public class GameScreen implements Screen {
         towerButton1.setChecked(true); // Selección inicial
 
         // Cambiar tamaño del texto
-        towerButton1.getLabel().setFontScale(2.5f);
-        towerButton2.getLabel().setFontScale(2.5f);
-        towerButton3.getLabel().setFontScale(2.5f);
+        towerButton1.getLabel().setFontScale(3.5f);
+        towerButton2.getLabel().setFontScale(3.5f);
+        towerButton3.getLabel().setFontScale(3.5f);
 
         // Crear tabla para los botones
         Table table = new Table();
@@ -133,6 +138,7 @@ public class GameScreen implements Screen {
 
         if (levelManager.lives <= 0) {
             System.out.println("¡Game Over!");
+            game.showGameOverScreen(); // Muestra la pantalla de Game Over
             return;
         }
 

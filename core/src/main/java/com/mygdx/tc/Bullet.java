@@ -10,7 +10,7 @@ public class Bullet {
     float speed = 200f;
     Texture texture;
     int damage;
-    public boolean isActive = true; // ✅ para saber si debe eliminarse
+    public boolean isActive = true;
 
     public Bullet(Vector2 startPos, Enemy target, Texture texture, int damage) {
         this.position = new Vector2(startPos);
@@ -20,8 +20,9 @@ public class Bullet {
     }
 
     public void update(float delta) {
-        if (target == null || target.isDead()) {
-            isActive = false; // 🔴 sin objetivo válido
+        // Si el objetivo no existe o ya está muerto o muriendo, desactivar la bala
+        if (target == null || target.isDead() || target.isDying()) {
+            isActive = false;
             return;
         }
 
@@ -29,8 +30,9 @@ public class Bullet {
         position.add(direction.scl(speed * delta));
 
         if (hasReachedTarget()) {
-            target.takeDamage(damage); // 🩸 aplicar daño
-            isActive = false; // ✅ marcar como usada
+            System.out.println("Bala impactó al enemigo. Daño: " + damage);
+            target.takeDamage(damage);
+            isActive = false;
         }
     }
 

@@ -14,8 +14,16 @@ public class GameMain extends Game {
     }
 
     public void startGame() {
+        // Reiniciar valores estáticos
+        LevelManager.lives = 20;
+        LevelManager.money = 100;
+
+        // Reiniciar contador de IDs de enemigos
+        Enemy.resetIDCounter();
+
         // Al iniciar el juego o reiniciar, pasa la instancia de GameMain a GameScreen
         this.setScreen(new GameScreen(this)); // Asegúrate de pasar la instancia de GameMain
+        System.out.println("Iniciando nueva partida");
     }
 
     @Override

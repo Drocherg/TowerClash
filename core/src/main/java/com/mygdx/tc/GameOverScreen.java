@@ -5,8 +5,10 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class GameOverScreen implements Screen {
@@ -39,15 +41,25 @@ public class GameOverScreen implements Screen {
         TextButton retryButton = new TextButton("Volver a jugar", buttonStyle);
         TextButton exitButton = new TextButton("Salir", buttonStyle);
 
-        // Listeners
-        retryButton.addListener(e -> {
-            game.setScreen(new GameScreen(game));
-            return true;
+        // Listeners con ChangeListener en lugar de lambda
+        retryButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                System.out.println("Botón Volver a jugar presionado");
+                // Reiniciar valores estáticos
+                LevelManager.lives = 20;
+                LevelManager.money = 100;
+                // Crear nueva pantalla de juego
+                game.startGame();
+                dispose(); // Importante: liberar recursos
+            }
         });
 
-        exitButton.addListener(e -> {
-            Gdx.app.exit();
-            return true;
+        exitButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.exit();
+            }
         });
 
         // Tabla para organizar elementos

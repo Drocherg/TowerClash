@@ -21,6 +21,31 @@ public class Tower {
 
     List<Bullet> bullets = new ArrayList<>();
 
+    // Costos específicos para cada tipo de torre
+    public static final int COST_CANNON = 60;
+    public static final int COST_TESLA = 40;
+    public static final int COST_MAGE = 100;
+
+    // Método estático para obtener el costo según el tipo
+    public static int getCostForType(int towerType) {
+        switch (towerType) {
+            case 1: return COST_CANNON;
+            case 2: return COST_TESLA;
+            case 3: return COST_MAGE;
+            default: return 50; // Valor por defecto
+        }
+    }
+
+    // Método estático para obtener el nombre según el tipo
+    public static String getNameForType(int towerType) {
+        switch (towerType) {
+            case 1: return "Cañón";
+            case 2: return "Tesla";
+            case 3: return "Mago";
+            default: return "Torre";
+        }
+    }
+
     public Tower(Vector2 position, int type) {
         this.position = position;
         this.type = type;
@@ -32,7 +57,7 @@ public class Tower {
                 damage = 25;
                 fireCooldown = 1f;
                 range = 200f;
-                fireTimer = 0;
+                fireTimer = 1;
                 break;
             case 2:
                 texture = new Texture("tesla.png");
@@ -40,7 +65,7 @@ public class Tower {
                 damage = 10;
                 fireCooldown = 0.5f;
                 range = 100f;
-                fireTimer = 5;
+                fireTimer = 1;
                 break;
             case 3:
                 texture = new Texture("mage.png");
@@ -48,7 +73,7 @@ public class Tower {
                 damage = 50;
                 fireCooldown = 2.5f;
                 range = 250f;
-                fireTimer = 0;
+                fireTimer = 1;
                 break;
         }
     }
@@ -102,5 +127,4 @@ public class Tower {
             bullet.render(batch);
         }
     }
-
 }

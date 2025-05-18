@@ -13,8 +13,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.graphics.Color;
 
 import java.util.List;
+import java.util.ArrayList;
 
 public class GameScreen implements Screen {
 
@@ -58,10 +60,10 @@ public class GameScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-        // Crear botones
-        towerButton1 = new TextButton("Cannon", skin, "toggle");
-        towerButton2 = new TextButton("Tesla", skin, "toggle");
-        towerButton3 = new TextButton("Mago", skin, "toggle");
+        // Crear botones con nombres y costos
+        towerButton1 = createTowerButton(1);
+        towerButton2 = createTowerButton(2);
+        towerButton3 = createTowerButton(3);
 
         // Agrupar botones para selección única
         ButtonGroup<Button> towerGroup = new ButtonGroup<>(towerButton1, towerButton2, towerButton3);
@@ -70,25 +72,60 @@ public class GameScreen implements Screen {
         towerGroup.setUncheckLast(true);
         towerButton1.setChecked(true); // Selección inicial
 
-        // Cambiar tamaño del texto
-        towerButton1.getLabel().setFontScale(3.5f);
-        towerButton2.getLabel().setFontScale(3.5f);
-        towerButton3.getLabel().setFontScale(3.5f);
-
         // Crear tabla para los botones
         Table table = new Table();
         table.bottom().right().pad(20);
         table.setFillParent(true);
-        table.add(towerButton1).width(150).height(50).pad(5).row();
-        table.add(towerButton2).width(150).height(50).pad(5).row();
-        table.add(towerButton3).width(150).height(50).pad(5).row();
+        table.add(towerButton1).width(220).height(70).pad(8).row();
+        table.add(towerButton2).width(220).height(70).pad(8).row();
+        table.add(towerButton3).width(220).height(70).pad(8).row();
 
         stage.addActor(table);
 
         // Listeners para cambiar tipo de torre
-        towerButton1.addListener(e -> { selectedTowerType = 1; return false; });
-        towerButton2.addListener(e -> { selectedTowerType = 2; return false; });
-        towerButton3.addListener(e -> { selectedTowerType = 3; return false; });
+        towerButton1.addListener(e -> {
+            selectedTowerType = 1;
+            return false;
+        });
+
+        towerButton2.addListener(e -> {
+            selectedTowerType = 2;
+            return false;
+        });
+
+        towerButton3.addListener(e -> {
+            selectedTowerType = 3;
+            return false;
+        });
+    }
+
+    // Método para crear botones de torre con estilo personalizado
+    private TextButton createTowerButton(int towerType) {
+        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle(
+            skin.get("toggle", TextButton.TextButtonStyle.class));
+
+        // Personalizar colores según el tipo de torre
+        switch (towerType) {
+            case 1: // Cañón - Rojo oscuro
+                style.fontColor = new Color(0.8f, 0.2f, 0.2f, 1);
+                style.downFontColor = new Color(1f, 0.5f, 0.5f, 1);
+                style.checkedFontColor = new Color(1f, 0.3f, 0.3f, 1);
+                break;
+            case 2: // Tesla - Azul eléctrico
+                style.fontColor = new Color(0.2f, 0.4f, 0.8f, 1);
+                style.downFontColor = new Color(0.5f, 0.7f, 1f, 1);
+                style.checkedFontColor = new Color(0.3f, 0.6f, 1f, 1);
+                break;
+            case 3: // Mago - Púrpura
+                style.fontColor = new Color(0.6f, 0.2f, 0.8f, 1);
+                style.downFontColor = new Color(0.8f, 0.5f, 1f, 1);
+                style.checkedFontColor = new Color(0.7f, 0.3f, 1f, 1);
+                break;
+        }
+
+        TextButton button = new TextButton(Tower.getNameForType(towerType) + "\n" + Tower.getCostForType(towerType) + " monedas", style);
+        button.getLabel().setFontScale(2.2f);
+        return button;
     }
 
     @Override
@@ -117,34 +154,44 @@ public class GameScreen implements Screen {
                     }
                 }
 
-                if (!isOnPath && LevelManager.money >= 50) {
+                // Obtener el costo de la torre seleccionada
+                int towerCost = Tower.getCostForType(selectedTowerType);
+
+                if (!isOnPath && LevelManager.money >= towerCost) {
                     Tower newTower = new Tower(towerPos, selectedTowerType);
                     levelManager.towersThisLevel.add(newTower);
-                    LevelManager.money -= 50;
+                    LevelManager.money -= towerCost;
                 }
             }
         }
 
-        // Lógica del juego
+        // Actualizar el generador de enemigos
+        levelManager.update(delta);
+
+        // Actualizar torres
         for (Tower tower : levelManager.towersThisLevel) {
             tower.update(delta, levelManager.currentEnemies);
         }
 
-        for (Enemy enemy : levelManager.currentEnemies) {
+        // Actualizar todos los enemigos
+        for (Enemy enemy : new ArrayList<>(levelManager.currentEnemies)) {
             enemy.update(delta);
         }
 
-        levelManager.removeDeadEnemies();
-
+        // Verificar game over
         if (levelManager.lives <= 0) {
             System.out.println("¡Game Over!");
-            game.showGameOverScreen(); // Muestra la pantalla de Game Over
+            game.showGameOverScreen();
             return;
         }
 
+        // Verificar si la oleada ha terminado
         if (levelManager.isWaveFinished()) {
             levelManager.startNextWave();
         }
+
+        // IMPORTANTE: Eliminar enemigos muertos DESPUÉS de que se hayan actualizado
+        levelManager.removeDeadEnemies();
 
         // Dibujo en orden: fondo, camino, torres, enemigos, interfaz
         batch.setProjectionMatrix(camera.combined);
@@ -165,9 +212,16 @@ public class GameScreen implements Screen {
         batch.begin();
         font.draw(batch, "Vidas: " + levelManager.lives, 10, 330);
         font.draw(batch, "Dinero: " + LevelManager.money, 10, 350);
+        font.draw(batch, "Oleada: " + levelManager.currentWave, 10, 310);
+        font.draw(batch, "Enemigos: " + levelManager.currentEnemies.size() +
+            " (+" + levelManager.enemiesToSpawn + " por generar)", 10, 290);
+
+        // Renderizar torres
         for (Tower tower : levelManager.towersThisLevel) {
             tower.render(batch);
         }
+
+        // Renderizar enemigos
         for (Enemy enemy : levelManager.currentEnemies) {
             enemy.render(batch, enemyTexture);
         }
@@ -194,11 +248,22 @@ public class GameScreen implements Screen {
         return P.dst(projection);
     }
 
-    @Override public void resize(int width, int height) {}
-    @Override public void pause() {}
-    @Override public void resume() {}
-    @Override public void hide() {}
-    @Override public void dispose() {
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
+    }
+
+    @Override
+    public void pause() {}
+
+    @Override
+    public void resume() {}
+
+    @Override
+    public void hide() {}
+
+    @Override
+    public void dispose() {
         batch.dispose();
         shapeRenderer.dispose();
         background.dispose();

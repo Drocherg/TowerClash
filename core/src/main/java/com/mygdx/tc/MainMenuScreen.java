@@ -28,7 +28,7 @@ public class MainMenuScreen implements Screen {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
         batch = new SpriteBatch();
-        background = new Texture("menu_background.png"); // Asegúrate de tener esta imagen en assets
+        background = new Texture("menu_background.png");
     }
 
     @Override

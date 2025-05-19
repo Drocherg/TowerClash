@@ -61,7 +61,7 @@ public class Tower {
                 break;
             case 2:
                 texture = new Texture("tesla.png");
-                bulletTexture = new Texture("teslaBullet.png"); // ⚡ Usa una textura visualmente eléctrica
+                bulletTexture = new Texture("teslaBullet.png");
                 damage = 10;
                 fireCooldown = 0.5f;
                 range = 100f;
@@ -119,7 +119,7 @@ public class Tower {
 
     public void render(SpriteBatch batch) {
         float drawSize = 128;
-        if (type == 3) drawSize = 96; // Torre de mago más pequeña
+        if (type == 3) drawSize = 96;
 
         batch.draw(texture, position.x - drawSize / 2, position.y - drawSize / 2, drawSize, drawSize);
 

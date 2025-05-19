@@ -21,8 +21,7 @@ public class GameMain extends Game {
         // Reiniciar contador de IDs de enemigos
         Enemy.resetIDCounter();
 
-        // Al iniciar el juego o reiniciar, pasa la instancia de GameMain a GameScreen
-        this.setScreen(new GameScreen(this)); // Asegúrate de pasar la instancia de GameMain
+        this.setScreen(new GameScreen(this));
         System.out.println("Iniciando nueva partida");
     }
 
@@ -32,6 +31,6 @@ public class GameMain extends Game {
     }
 
     public void showGameOverScreen() {
-        this.setScreen(new GameOverScreen(this)); // Puedes cambiar a GameOverScreen cuando sea necesario
+        this.setScreen(new GameOverScreen(this));
     }
 }

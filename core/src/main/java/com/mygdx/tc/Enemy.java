@@ -156,7 +156,7 @@ public class Enemy {
         this.speed = speed;
     }
 
-    // Método para reiniciar el contador de IDs (útil al reiniciar el juego)
+    // Metodo para reiniciar el contador de IDs
     public static void resetIDCounter() {
         nextID = 1;
     }

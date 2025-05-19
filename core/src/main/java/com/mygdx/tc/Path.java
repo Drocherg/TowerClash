@@ -19,17 +19,15 @@ public class Path {
         // Empieza a la izquierda y termina a la derecha, centrado verticalmente
         waypoints.add(new Vector2(0, 180)); // Punto inicial
 
-        // Hacemos un zigzag pronunciado
-        waypoints.add(new Vector2(100, 250)); // Primer giro (más pronunciado)
-        waypoints.add(new Vector2(150, 150)); // Segundo giro (más pronunciado)
+        // Se hace un zigzag pronunciado
+        waypoints.add(new Vector2(100, 250)); // Primer giro
+        waypoints.add(new Vector2(150, 150)); // Segundo giro
         waypoints.add(new Vector2(200, 240)); // Tercer giro
         waypoints.add(new Vector2(250, 130)); // Cuarto giro más fuerte
         waypoints.add(new Vector2(300, 220)); // Continuamos el zigzag
         waypoints.add(new Vector2(350, 140)); // Otro giro
         waypoints.add(new Vector2(400, 230)); // Otro giro más
         waypoints.add(new Vector2(450, 170)); // Más zigzagueante
-
-        // Ahora vamos a darle una forma más curva al camino como un tirabuzón
         waypoints.add(new Vector2(500, 120)); // Curva más baja
         waypoints.add(new Vector2(550, 200)); // Curvatura que va hacia arriba
         waypoints.add(new Vector2(600, 180)); // Movimiento hacia abajo

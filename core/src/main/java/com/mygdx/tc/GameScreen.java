@@ -99,7 +99,7 @@ public class GameScreen implements Screen {
         });
     }
 
-    // Método para crear botones de torre con estilo personalizado
+    // Metodo para crear botones de torre con estilo personalizado
     private TextButton createTowerButton(int towerType) {
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle(
             skin.get("toggle", TextButton.TextButtonStyle.class));

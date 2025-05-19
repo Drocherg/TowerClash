@@ -21,14 +21,14 @@ public class LevelManager {
     // Para gestionar la aparición gradual de enemigos
     private float enemySpawnTimer = 0;
     private float enemySpawnInterval = 1.0f; // 1 segundo entre cada enemigo
-    public int enemiesToSpawn = 0; // Cambiado a público para acceder desde GameScreen
+    public int enemiesToSpawn = 0;
 
     public void startLevel() {
         currentWave = 0;
         towersThisLevel = new ArrayList<>();
         currentPath = new Path();
         currentPath.generateRandomPath();
-        currentEnemies = new CopyOnWriteArrayList<>(); // Thread-safe list
+        currentEnemies = new CopyOnWriteArrayList<>();
         Enemy.resetIDCounter(); // Reiniciar contador de IDs
     }
 
@@ -59,7 +59,6 @@ public class LevelManager {
         if (enemiesToSpawn > 0) {
             enemySpawnTimer += delta;
 
-            // Si es tiempo de generar un nuevo enemigo
             if (enemySpawnTimer >= enemySpawnInterval) {
                 enemySpawnTimer = 0;
                 spawnEnemy();
@@ -68,7 +67,7 @@ public class LevelManager {
         }
     }
 
-    // Método para generar un solo enemigo
+    // Metodo para generar un solo enemigo
     private void spawnEnemy() {
         Enemy enemy = new Enemy(currentPath);
         currentEnemies.add(enemy);
@@ -84,7 +83,7 @@ public class LevelManager {
 
     public static void enemyKilled() {
         Random rand = new Random();
-        int recompensa = rand.nextInt(16); // genera un número entre 0 y 10 (inclusive)
+        int recompensa = rand.nextInt(16); // genera un número entre 0 y 15 (inclusive)
         money += recompensa;
         System.out.println("Enemigo eliminado. Ganas " + recompensa + " monedas. Dinero total: " + money);
     }
@@ -93,7 +92,7 @@ public class LevelManager {
         return money;
     }
 
-    // Método para eliminar enemigos muertos de la lista
+    // Metodo para eliminar enemigos muertos de la lista
     public void removeDeadEnemies() {
         // Crear una lista temporal para almacenar los enemigos que deben permanecer
         List<Enemy> enemiesToKeep = new ArrayList<>();
